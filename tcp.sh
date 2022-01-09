@@ -4,21 +4,21 @@ export PATH
 
 #=================================================
 #	System Required: CentOS 6/7,Debian 8/9,Ubuntu 16+
-#	Description: BBR+BBR魔改版+BBRplus+Lotserver
+#	Description: BBR + BBR bản sửa đổi phép thuật + BBRplus + Lotserver
 #	Version: 1.3.2
-#	Author: 千影,cx9208
-#	Blog: https://www.94ish.me/
+#	Author: Aiko,Cute
+#	Blog: Aikocute.tk
 #=================================================
 
 sh_ver="1.3.2"
 github="raw.githubusercontent.com/chiakge/Linux-NetSpeed/master"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
-Info="${Green_font_prefix}[信息]${Font_color_suffix}"
-Error="${Red_font_prefix}[错误]${Font_color_suffix}"
-Tip="${Green_font_prefix}[注意]${Font_color_suffix}"
+Info="${Green_font_prefix}[thông tin]${Font_color_suffix}"
+Error="${Red_font_prefix}[Sai lầm]${Font_color_suffix}"
+Tip="${Green_font_prefix}[Để ý]${Font_color_suffix}"
 
-#安装BBR内核
+
 installbbr(){
 	kernel_version="4.11.8"
 	if [[ "${release}" == "centos" ]]; then
@@ -42,16 +42,16 @@ installbbr(){
 	fi
 	detele_kernel
 	BBR_grub
-	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBR/BBR魔改版${Font_color_suffix}"
-	stty erase '^H' && read -p "需要重启VPS后，才能开启BBR/BBR魔改版，是否现在重启 ? [Y/n] :" yn
+	echo -e "${Tip} Sau khi khởi động lại VPS, vui lòng chạy lại script để kích hoạt${Red_font_prefix}Bản sửa đổi phép thuật BBR / BBR${Font_color_suffix}"
+	stty erase '^H' && read -p "Bạn cần khởi động lại VPS trước khi có thể bắt đầu sửa đổi BBR / BBR. Bạn có muốn khởi động lại ngay bây giờ không? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
 	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
+		echo -e "${Info} Đang khởi động lại VPS ..."
 		reboot
 	fi
 }
 
-#安装BBRplus内核
+
 installbbrplus(){
 	kernel_version="4.14.129-bbrplus"
 	if [[ "${release}" == "centos" ]]; then
@@ -69,16 +69,16 @@ installbbrplus(){
 	fi
 	detele_kernel
 	BBR_grub
-	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}BBRplus${Font_color_suffix}"
-	stty erase '^H' && read -p "需要重启VPS后，才能开启BBRplus，是否现在重启 ? [Y/n] :" yn
+	echo -e "${Tip} Sau khi khởi động lại VPS, vui lòng chạy lại script để kích hoạt${Red_font_prefix}BBRplus${Font_color_suffix}"
+	stty erase '^H' && read -p "BBRplus cần được khởi động lại sau khi VPS được khởi động lại. Bạn có muốn khởi động lại ngay bây giờ không? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
 	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
+		echo -e "${Info} VPS Đang khởi động lại ..."
 		reboot
 	fi
 }
 
-#安装Lotserver内核
+
 installlot(){
 	if [[ "${release}" == "centos" ]]; then
 		rpm --import http://${github}/lotserver/${release}/RPM-GPG-KEY-elrepo.org
@@ -95,11 +95,11 @@ installlot(){
 	fi
 	detele_kernel
 	BBR_grub
-	echo -e "${Tip} 重启VPS后，请重新运行脚本开启${Red_font_prefix}Lotserver${Font_color_suffix}"
-	stty erase '^H' && read -p "需要重启VPS后，才能开启Lotserver，是否现在重启 ? [Y/n] :" yn
+	echo -e "${Tip} Sau khi khởi động lại VPS, vui lòng chạy lại script để kích hoạt${Red_font_prefix}Lotserver${Font_color_suffix}"
+	stty erase '^H' && read -p "Lotserver cần được khởi động lại sau khi khởi động lại VPS. Bạn có muốn khởi động lại nó ngay bây giờ không? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
 	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
+		echo -e "${Info} Đang khởi động lại VPS ..."
 		reboot
 	fi
 }
@@ -110,7 +110,7 @@ startbbr(){
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbr" >> /etc/sysctl.conf
 	sysctl -p
-	echo -e "${Info}BBR启动成功！"
+	echo -e "${Info}BBR đã bắt đầu thành công!"
 }
 
 #启用BBRplus
@@ -119,7 +119,7 @@ startbbrplus(){
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=bbrplus" >> /etc/sysctl.conf
 	sysctl -p
-	echo -e "${Info}BBRplus启动成功！"
+	echo -e "${Info}BBRplus đã bắt đầu thành công!"
 }
 
 #编译并启用BBR魔改
@@ -159,7 +159,7 @@ startbbrmod(){
 	echo "net.ipv4.tcp_congestion_control=tsunami" >> /etc/sysctl.conf
 	sysctl -p
     cd .. && rm -rf bbrmod
-	echo -e "${Info}魔改版BBR启动成功！"
+	echo -e "${Info}Bản sửa đổi kỳ diệu BBR đã được khởi chạy thành công!"
 }
 
 #编译并启用BBR魔改
@@ -197,10 +197,10 @@ startbbrmod_nanqinlang(){
 	echo "net.core.default_qdisc=fq" >> /etc/sysctl.conf
 	echo "net.ipv4.tcp_congestion_control=nanqinlang" >> /etc/sysctl.conf
 	sysctl -p
-	echo -e "${Info}魔改版BBR启动成功！"
+	echo -e "${Info}Bản sửa đổi kỳ diệu BBR đã được khởi chạy thành công!"
 }
 
-#启用Lotserver
+
 startlotserver(){
 	remove_all
 	if [[ "${release}" == "centos" ]]; then
@@ -218,7 +218,7 @@ maxmode=\"1\"">>/appex/etc/config
 	start_menu
 }
 
-#卸载全部加速
+
 remove_all(){
 	rm -rf bbrmod
 	sed -i '/net.core.default_qdisc/d' /etc/sysctl.conf
@@ -260,7 +260,7 @@ remove_all(){
 		bash <(wget --no-check-certificate -qO- https://github.com/MoeClub/lotServer/raw/master/Install.sh) uninstall
 	fi
 	clear
-	echo -e "${Info}:清除加速完成。"
+	echo -e "${Info}:Hoàn thành tăng tốc rõ ràng."
 	sleep 1s
 }
 
