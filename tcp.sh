@@ -303,66 +303,66 @@ net.ipv4.ip_forward = 1">>/etc/sysctl.conf
 	echo "*               soft    nofile           1000000
 *               hard    nofile          1000000">/etc/security/limits.conf
 	echo "ulimit -SHn 1000000">>/etc/profile
-	read -p "需要重启VPS后，才能生效系统优化配置，是否现在重启 ? [Y/n] :" yn
+	read -p "Cấu hình tối ưu hóa hệ thống sẽ chỉ có hiệu lực sau khi khởi động lại VPS. Bạn có muốn khởi động lại ngay bây giờ không? [Y/n] :" yn
 	[ -z "${yn}" ] && yn="y"
 	if [[ $yn == [Yy] ]]; then
-		echo -e "${Info} VPS 重启中..."
+		echo -e "${Info} Đang khởi động lại VPS ..."
 		reboot
 	fi
 }
-#更新脚本
+
 Update_Shell(){
-	echo -e "当前版本为 [ ${sh_ver} ]，开始检测最新版本..."
+	echo -e "Phiên bản hiện tại là [ ${sh_ver} ]，Bắt đầu phát hiện phiên bản mới nhất ..."
 	sh_new_ver=$(wget --no-check-certificate -qO- "http://${github}/tcp.sh"|grep 'sh_ver="'|awk -F "=" '{print $NF}'|sed 's/\"//g'|head -1)
-	[[ -z ${sh_new_ver} ]] && echo -e "${Error} 检测最新版本失败 !" && start_menu
+	[[ -z ${sh_new_ver} ]] && echo -e "${Error} Không thể phát hiện phiên bản mới nhất!" && start_menu
 	if [[ ${sh_new_ver} != ${sh_ver} ]]; then
-		echo -e "发现新版本[ ${sh_new_ver} ]，是否更新？[Y/n]"
-		read -p "(默认: y):" yn
+		echo -e "phiên bản mới được tìm thấy[ ${sh_new_ver} ]，Cập nhật?[Y/n]"
+		read -p "(Lỗi: y):" yn
 		[[ -z "${yn}" ]] && yn="y"
 		if [[ ${yn} == [Yy] ]]; then
 			wget -N --no-check-certificate http://${github}/tcp.sh && chmod +x tcp.sh
-			echo -e "脚本已更新为最新版本[ ${sh_new_ver} ] !"
+			echo -e "Tập lệnh đã được cập nhật lên phiên bản mới nhất[ ${sh_new_ver} ] !"
 		else
-			echo && echo "	已取消..." && echo
+			echo && echo "	Đã hủy ..." && echo
 		fi
 	else
-		echo -e "当前已是最新版本[ ${sh_new_ver} ] !"
+		echo -e "Hiện tại là phiên bản mới nhất[ ${sh_new_ver} ] !"
 		sleep 5s
 	fi
 }
 
-#开始菜单
+
 start_menu(){
 clear
-echo && echo -e " TCP加速 一键安装管理脚本 ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
-  -- 就是爱生活 | 94ish.me --
+echo && echo -e " Tập lệnh quản lý cài đặt một cú nhấp chuột tăng tốc TCP ${Red_font_prefix}[v${sh_ver}]${Font_color_suffix}
+  -- chỉ yêu cuộc sống | AikoCuteHotMe --
   
- ${Green_font_prefix}0.${Font_color_suffix} 升级脚本
-————————————内核管理————————————
- ${Green_font_prefix}1.${Font_color_suffix} 安装 BBR/BBR魔改版内核
- ${Green_font_prefix}2.${Font_color_suffix} 安装 BBRplus版内核 
- ${Green_font_prefix}3.${Font_color_suffix} 安装 Lotserver(锐速)内核
-————————————加速管理————————————
- ${Green_font_prefix}4.${Font_color_suffix} 使用BBR加速
- ${Green_font_prefix}5.${Font_color_suffix} 使用BBR魔改版加速
- ${Green_font_prefix}6.${Font_color_suffix} 使用暴力BBR魔改版加速(不支持部分系统)
- ${Green_font_prefix}7.${Font_color_suffix} 使用BBRplus版加速
- ${Green_font_prefix}8.${Font_color_suffix} 使用Lotserver(锐速)加速
-————————————杂项管理————————————
- ${Green_font_prefix}9.${Font_color_suffix} 卸载全部加速
- ${Green_font_prefix}10.${Font_color_suffix} 系统配置优化
- ${Green_font_prefix}11.${Font_color_suffix} 退出脚本
+ ${Green_font_prefix}0.${Font_color_suffix} nâng cấp kịch bản
+————————————Quản lý BBR————————————
+ ${Green_font_prefix}1.${Font_color_suffix} Cài đặt hạt nhân được sửa đổi ma thuật BBR / BBR
+ ${Green_font_prefix}2.${Font_color_suffix} Cài đặt phiên bản BBRplus của hạt nhân
+ ${Green_font_prefix}3.${Font_color_suffix} Cài đặt nhân Lotserver (Tốc độ sắc nét)
+————————————Tăng tốc quản lý————————————
+ ${Green_font_prefix}4.${Font_color_suffix} Tăng tốc với BBR
+ ${Green_font_prefix}5.${Font_color_suffix} Sử dụng bản sửa đổi phép thuật BBR để tăng tốc độ
+ ${Green_font_prefix}6.${Font_color_suffix} Sử dụng sửa đổi phép thuật BBR bạo lực để tăng tốc (một số hệ thống không được hỗ trợ)
+ ${Green_font_prefix}7.${Font_color_suffix} Tăng tốc với phiên bản BBRplus
+ ${Green_font_prefix}8.${Font_color_suffix} Sử dụng Lotserver (tốc độ nhanh) để tăng tốc
+————————————Quản lý khác————————————
+ ${Green_font_prefix}9.${Font_color_suffix} gỡ cài đặt tất cả tăng tốc
+ ${Green_font_prefix}10.${Font_color_suffix} Tối ưu hóa cấu hình hệ thống
+ ${Green_font_prefix}11.${Font_color_suffix} Thoát
 ————————————————————————————————" && echo
 
 	check_status
 	if [[ ${kernel_status} == "noinstall" ]]; then
-		echo -e " 当前状态: ${Green_font_prefix}未安装${Font_color_suffix} 加速内核 ${Red_font_prefix}请先安装内核${Font_color_suffix}"
+		echo -e " Tình trạng hiện tại: ${Green_font_prefix}Chưa cài đặt${Font_color_suffix} hạt nhân tăng tốc ${Red_font_prefix}Vui lòng cài đặt hạt nhân trước${Font_color_suffix}"
 	else
-		echo -e " 当前状态: ${Green_font_prefix}已安装${Font_color_suffix} ${_font_prefix}${kernel_status}${Font_color_suffix} 加速内核 , ${Green_font_prefix}${run_status}${Font_color_suffix}"
+		echo -e " Tình trạng hiện tại: ${Green_font_prefix}Nó đã được cài đặt${Font_color_suffix} ${_font_prefix}${kernel_status}${Font_color_suffix} hạt nhân tăng tốc , ${Green_font_prefix}${run_status}${Font_color_suffix}"
 		
 	fi
 echo
-read -p " 请输入数字 [0-11]:" num
+read -p " Vui lòng nhập số [0-11]:" num
 case "$num" in
 	0)
 	Update_Shell
@@ -402,43 +402,42 @@ case "$num" in
 	;;
 	*)
 	clear
-	echo -e "${Error}:请输入正确数字 [0-11]"
+	echo -e "${Error}:Vui lòng nhập số chính xác [0-11]"
 	sleep 5s
 	start_menu
 	;;
 esac
 }
-#############内核管理组件#############
 
-#删除多余内核
+
 detele_kernel(){
 	if [[ "${release}" == "centos" ]]; then
 		rpm_total=`rpm -qa | grep kernel | grep -v "${kernel_version}" | grep -v "noarch" | wc -l`
 		if [ "${rpm_total}" > "1" ]; then
-			echo -e "检测到 ${rpm_total} 个其余内核，开始卸载..."
+			echo -e "phát hiện ${rpm_total} các hạt nhân còn lại, bắt đầu gỡ cài đặt ..."
 			for((integer = 1; integer <= ${rpm_total}; integer++)); do
 				rpm_del=`rpm -qa | grep kernel | grep -v "${kernel_version}" | grep -v "noarch" | head -${integer}`
-				echo -e "开始卸载 ${rpm_del} 内核..."
+				echo -e "bắt đầu gỡ cài đặt ${rpm_del} Nhân ..."
 				rpm --nodeps -e ${rpm_del}
-				echo -e "卸载 ${rpm_del} 内核卸载完成，继续..."
+				echo -e "gỡ cài đặt ${rpm_del} Hoàn tất quá trình dỡ hạt nhân, tiếp tục ..."
 			done
-			echo --nodeps -e "内核卸载完毕，继续..."
+			echo --nodeps -e "Quá trình dỡ hạt nhân hoàn tất, tiếp tục ..."
 		else
-			echo -e " 检测到 内核 数量不正确，请检查 !" && exit 1
+			echo -e " Đã phát hiện số lõi không chính xác, vui lòng kiểm tra!" && exit 1
 		fi
 	elif [[ "${release}" == "debian" || "${release}" == "ubuntu" ]]; then
 		deb_total=`dpkg -l | grep linux-image | awk '{print $2}' | grep -v "${kernel_version}" | wc -l`
 		if [ "${deb_total}" > "1" ]; then
-			echo -e "检测到 ${deb_total} 个其余内核，开始卸载..."
+			echo -e "phát hiện ${deb_total} các hạt nhân còn lại, bắt đầu gỡ cài đặt ..."
 			for((integer = 1; integer <= ${deb_total}; integer++)); do
 				deb_del=`dpkg -l|grep linux-image | awk '{print $2}' | grep -v "${kernel_version}" | head -${integer}`
-				echo -e "开始卸载 ${deb_del} 内核..."
+				echo -e "bắt đầu gỡ cài đặt ${deb_del} Nhân ..."
 				apt-get purge -y ${deb_del}
-				echo -e "卸载 ${deb_del} 内核卸载完成，继续..."
+				echo -e "gỡ cài đặt${deb_del} Hoàn tất quá trình dỡ hạt nhân, tiếp tục ..."
 			done
-			echo -e "内核卸载完毕，继续..."
+			echo -e "Quá trình dỡ hạt nhân hoàn tất, tiếp tục ..."
 		else
-			echo -e " 检测到 内核 数量不正确，请检查 !" && exit 1
+			echo -e " Đã phát hiện số lõi không chính xác, vui lòng kiểm tra!" && exit 1
 		fi
 	fi
 }
@@ -464,13 +463,13 @@ BBR_grub(){
     fi
 }
 
-#############内核管理组件#############
 
 
 
-#############系统检测组件#############
 
-#检查系统
+
+
+
 check_sys(){
 	if [[ -f /etc/redhat-release ]]; then
 		release="centos"
@@ -489,7 +488,7 @@ check_sys(){
     fi
 }
 
-#检查Linux版本
+
 check_version(){
 	if [[ -s /etc/redhat-release ]]; then
 		version=`grep -oE  "[0-9.]+" /etc/redhat-release | cut -d . -f 1`
@@ -504,29 +503,29 @@ check_version(){
 	fi
 }
 
-#检查安装bbr的系统要求
+
 check_sys_bbr(){
 	check_version
 	if [[ "${release}" == "centos" ]]; then
 		if [[ ${version} -ge "6" ]]; then
 			installbbr
 		else
-			echo -e "${Error} BBR内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Hạt nhân BBR không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	elif [[ "${release}" == "debian" ]]; then
 		if [[ ${version} -ge "8" ]]; then
 			installbbr
 		else
-			echo -e "${Error} BBR内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Hạt nhân BBR không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	elif [[ "${release}" == "ubuntu" ]]; then
 		if [[ ${version} -ge "14" ]]; then
 			installbbr
 		else
-			echo -e "${Error} BBR内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Hạt nhân BBR không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	else
-		echo -e "${Error} BBR内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+		echo -e "${Error} Hạt nhân BBR không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 	fi
 }
 
@@ -536,27 +535,27 @@ check_sys_bbrplus(){
 		if [[ ${version} -ge "6" ]]; then
 			installbbrplus
 		else
-			echo -e "${Error} BBRplus内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Hạt nhân BBRplus không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	elif [[ "${release}" == "debian" ]]; then
 		if [[ ${version} -ge "8" ]]; then
 			installbbrplus
 		else
-			echo -e "${Error} BBRplus内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Hạt nhân BBRplus không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	elif [[ "${release}" == "ubuntu" ]]; then
 		if [[ ${version} -ge "14" ]]; then
 			installbbrplus
 		else
-			echo -e "${Error} BBRplus内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Hạt nhân BBRplus không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	else
-		echo -e "${Error} BBRplus内核不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+		echo -e "${Error} Hạt nhân BBRplus không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 	fi
 }
 
 
-#检查安装Lotsever的系统要求
+
 check_sys_Lotsever(){
 	check_version
 	if [[ "${release}" == "centos" ]]; then
@@ -568,7 +567,7 @@ check_sys_Lotsever(){
 			kernel_version="3.10.0-327"
 			installlot
 		else
-			echo -e "${Error} Lotsever不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Lotsever không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	elif [[ "${release}" == "debian" ]]; then
 		if [[ ${version} = "7" || ${version} = "8" ]]; then
@@ -585,7 +584,7 @@ check_sys_Lotsever(){
 				installlot
 			fi
 		else
-			echo -e "${Error} Lotsever不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Lotsever không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	elif [[ "${release}" == "ubuntu" ]]; then
 		if [[ ${version} -ge "12" ]]; then
@@ -597,10 +596,10 @@ check_sys_Lotsever(){
 				installlot
 			fi
 		else
-			echo -e "${Error} Lotsever不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+			echo -e "${Error} Lotsever không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 		fi
 	else
-		echo -e "${Error} Lotsever不支持当前系统 ${release} ${version} ${bit} !" && exit 1
+		echo -e "${Error} Lotsever không hỗ trợ hệ thống hiện tại ${release} ${version} ${bit} !" && exit 1
 	fi
 }
 
@@ -621,57 +620,57 @@ check_status(){
 		if [[ -e /appex/bin/lotServer.sh ]]; then
 			run_status=`bash /appex/bin/lotServer.sh status | grep "LotServer" | awk  '{print $3}'`
 			if [[ ${run_status} = "running!" ]]; then
-				run_status="启动成功"
+				run_status="Đã bắt đầu thành công"
 			else 
-				run_status="启动失败"
+				run_status="không thể kích hoạt"
 			fi
 		else 
-			run_status="未安装加速模块"
+			run_status="Mô-đun tăng tốc chưa được cài đặt"
 		fi
 	elif [[ ${kernel_status} == "BBR" ]]; then
 		run_status=`grep "net.ipv4.tcp_congestion_control" /etc/sysctl.conf | awk -F "=" '{print $2}'`
 		if [[ ${run_status} == "bbr" ]]; then
 			run_status=`lsmod | grep "bbr" | awk '{print $1}'`
 			if [[ ${run_status} == "tcp_bbr" ]]; then
-				run_status="BBR启动成功"
+				run_status="BBR đã bắt đầu thành công"
 			else 
-				run_status="BBR启动失败"
+				run_status="BBR không khởi động được"
 			fi
 		elif [[ ${run_status} == "tsunami" ]]; then
 			run_status=`lsmod | grep "tsunami" | awk '{print $1}'`
 			if [[ ${run_status} == "tcp_tsunami" ]]; then
-				run_status="BBR魔改版启动成功"
+				run_status="Bản sửa đổi phép thuật BBR đã bắt đầu thành công"
 			else 
-				run_status="BBR魔改版启动失败"
+				run_status="Không thể bắt đầu sửa đổi phép thuật BBR"
 			fi
 		elif [[ ${run_status} == "nanqinlang" ]]; then
 			run_status=`lsmod | grep "nanqinlang" | awk '{print $1}'`
 			if [[ ${run_status} == "tcp_nanqinlang" ]]; then
-				run_status="暴力BBR魔改版启动成功"
+				run_status="Đã khởi chạy thành công bản sửa đổi phép thuật BBR bạo lực"
 			else 
-				run_status="暴力BBR魔改版启动失败"
+				run_status="Không thể bắt đầu bản sửa đổi phép thuật BBR bạo lực"
 			fi
 		else 
-			run_status="未安装加速模块"
+			run_status="Mô-đun tăng tốc chưa được cài đặt"
 		fi
 	elif [[ ${kernel_status} == "BBRplus" ]]; then
 		run_status=`grep "net.ipv4.tcp_congestion_control" /etc/sysctl.conf | awk -F "=" '{print $2}'`
 		if [[ ${run_status} == "bbrplus" ]]; then
 			run_status=`lsmod | grep "bbrplus" | awk '{print $1}'`
 			if [[ ${run_status} == "tcp_bbrplus" ]]; then
-				run_status="BBRplus启动成功"
+				run_status="BBRplus đã bắt đầu thành công"
 			else 
-				run_status="BBRplus启动失败"
+				run_status="BBRplus không khởi động được"
 			fi
 		else 
-			run_status="未安装加速模块"
+			run_status="Mô-đun tăng tốc chưa được cài đặt"
 		fi
 	fi
 }
 
-#############系统检测组件#############
+
 check_sys
 check_version
-[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} 本脚本不支持当前系统 ${release} !" && exit 1
+[[ ${release} != "debian" ]] && [[ ${release} != "ubuntu" ]] && [[ ${release} != "centos" ]] && echo -e "${Error} Tập lệnh này không hỗ trợ hệ thống hiện tại ${release} !" && exit 1
 start_menu
 
